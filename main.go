@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -20,6 +21,9 @@ const (
 type config struct {
 	AccessToken string `json:"access_token"`
 }
+
+// loggers
+var _stderr = log.New(os.Stderr, "", 0)
 
 // load config file
 func loadConf() (conf config, err error) {
@@ -38,13 +42,6 @@ func loadConf() (conf config, err error) {
 	return config{}, err
 }
 
-// print error and exit
-func printErrorAndExit(err error) {
-	fmt.Println(err.Error())
-
-	os.Exit(1)
-}
-
 func main() {
 	var conf config
 	var err error
@@ -52,7 +49,9 @@ func main() {
 	if conf, err = loadConf(); err == nil {
 		switch len(os.Args) {
 		case 1: // no params
-			err = fmt.Errorf("usage: $ %s [message to send]", os.Args[0])
+			err = fmt.Errorf(`> usage:
+
+$ %s [message to send]`, os.Args[0])
 		default: // one or more params
 			str := strings.Join(os.Args[1:], " ")
 
@@ -67,6 +66,6 @@ func main() {
 	}
 
 	if err != nil {
-		printErrorAndExit(err)
+		_stderr.Fatalf(err.Error())
 	}
 }
