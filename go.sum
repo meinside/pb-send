@@ -1,2 +1,4 @@
+github.com/meinside/infisical-go v0.0.9 h1:fHgl0oJrF4W4UKLodBmAeWgdmugMqKcD+U8W4vUDNik=
+github.com/meinside/infisical-go v0.0.9/go.mod h1:cfQHaBT5VIzQISkrmJj/AUkyxGMoTBy8ENNEL0TJ02E=
 github.com/mitsuse/pushbullet-go v0.1.0 h1:W9izHOpz8uilRBgbYSnqb+LZK/l8Ad4slRTCBFpItG0=
 github.com/mitsuse/pushbullet-go v0.1.0/go.mod h1:sJ6Y3IROSfSQNLY/8gtYjq4Gs49DFnrxaqxQA6DVgnM=

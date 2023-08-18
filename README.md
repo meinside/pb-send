@@ -1,18 +1,18 @@
 # pb-send
 
-Sends a message through [Pushbullet](https://docs.pushbullet.com/).
+Send messages through [Pushbullet](https://docs.pushbullet.com/) API.
 
-## install
+## Install
 
 ```bash
-$ go get -u github.com/meinside/pb-send
+$ go install github.com/meinside/pb-send@latest
 ```
 
-## setup
+## Configuration
 
 Get your access token from [here](https://www.pushbullet.com/#settings/account),
 
-then create a file named `pb-send.json` in your `$HOME/.config/` directory:
+then create a file named `config.json` in your `$XDG_CONFIG_HOME/pb-send/` directory:
 
 ```json
 {
@@ -20,9 +20,29 @@ then create a file named `pb-send.json` in your `$HOME/.config/` directory:
 }
 ```
 
-## run
+You can also use [Infisical](https://infisical.com/) for retrieving your access token:
+
+```json
+{
+  "infisical": {
+    "workspace_id": "012345abcdefg",
+    "token": "st.xyzwabcd.0987654321.abcdefghijklmnop",
+    "environment": "dev",
+    "secret_type": "shared",
+    "key_path": "/path/to/your/KEY_TO_ACCESS_TOKEN"
+  }
+}
+```
+
+NOTE: It only supports E2EE-disabled Infisical workspaces for now.
+
+## Run
 
 ```bash
-$ $GOPATH/bin/pb-send [any message to send]
+$ pb-send [any message to send]
 ```
+
+## License
+
+MIT
 
