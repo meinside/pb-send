@@ -26,6 +26,10 @@ type config struct {
 
 	// or Infisical settings
 	Infisical *struct {
+		// NOTE: When the workspace's E2EE setting is enabled, APIKey is essential for decryption
+		E2EE   bool    `json:"e2ee,omitempty"`
+		APIKey *string `json:"api_key,omitempty"`
+
 		WorkspaceID        string               `json:"workspace_id"`
 		Token              string               `json:"token"`
 		Environment        string               `json:"environment"`
@@ -61,12 +65,25 @@ func loadConf() (conf config, err error) {
 				if conf.AccessToken == "" && conf.Infisical != nil {
 					// read access token from infisical
 					var accessToken string
-					accessToken, err = helper.Value(
-						conf.Infisical.WorkspaceID,
-						conf.Infisical.Token,
-						conf.Infisical.Environment,
-						conf.Infisical.SecretType, conf.Infisical.AccessTokenKeyPath,
-					)
+
+					if conf.Infisical.E2EE && conf.Infisical.APIKey != nil {
+						accessToken, err = helper.E2EEValue(
+							*conf.Infisical.APIKey,
+							conf.Infisical.WorkspaceID,
+							conf.Infisical.Token,
+							conf.Infisical.Environment,
+							conf.Infisical.SecretType,
+							conf.Infisical.AccessTokenKeyPath,
+						)
+					} else {
+						accessToken, err = helper.Value(
+							conf.Infisical.WorkspaceID,
+							conf.Infisical.Token,
+							conf.Infisical.Environment,
+							conf.Infisical.SecretType,
+							conf.Infisical.AccessTokenKeyPath,
+						)
+					}
 					conf.AccessToken = accessToken
 				}
 
