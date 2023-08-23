@@ -38,6 +38,41 @@ type config struct {
 	} `json:"infisical,omitempty"`
 }
 
+func (c *config) GetAccessToken() string {
+	if c.AccessToken == "" && c.Infisical != nil {
+		// read access token from infisical
+		var accessToken string
+
+		var err error
+		if c.Infisical.E2EE && c.Infisical.APIKey != nil {
+			accessToken, err = helper.E2EEValue(
+				*c.Infisical.APIKey,
+				c.Infisical.WorkspaceID,
+				c.Infisical.Token,
+				c.Infisical.Environment,
+				c.Infisical.SecretType,
+				c.Infisical.AccessTokenKeyPath,
+			)
+		} else {
+			accessToken, err = helper.Value(
+				c.Infisical.WorkspaceID,
+				c.Infisical.Token,
+				c.Infisical.Environment,
+				c.Infisical.SecretType,
+				c.Infisical.AccessTokenKeyPath,
+			)
+		}
+
+		if err != nil {
+			_stderr.Printf("failed to retrieve access token from infisical: %s", err)
+		}
+
+		c.AccessToken = accessToken
+	}
+
+	return c.AccessToken
+}
+
 // loggers
 var _stderr = log.New(os.Stderr, "", 0)
 
@@ -62,31 +97,6 @@ func loadConf() (conf config, err error) {
 		var bytes []byte
 		if bytes, err = os.ReadFile(configFilepath); err == nil {
 			if err = json.Unmarshal(bytes, &conf); err == nil {
-				if conf.AccessToken == "" && conf.Infisical != nil {
-					// read access token from infisical
-					var accessToken string
-
-					if conf.Infisical.E2EE && conf.Infisical.APIKey != nil {
-						accessToken, err = helper.E2EEValue(
-							*conf.Infisical.APIKey,
-							conf.Infisical.WorkspaceID,
-							conf.Infisical.Token,
-							conf.Infisical.Environment,
-							conf.Infisical.SecretType,
-							conf.Infisical.AccessTokenKeyPath,
-						)
-					} else {
-						accessToken, err = helper.Value(
-							conf.Infisical.WorkspaceID,
-							conf.Infisical.Token,
-							conf.Infisical.Environment,
-							conf.Infisical.SecretType,
-							conf.Infisical.AccessTokenKeyPath,
-						)
-					}
-					conf.AccessToken = accessToken
-				}
-
 				return conf, err
 			}
 		}
@@ -108,7 +118,7 @@ $ %s [message to send]`, os.Args[0])
 		default: // one or more params
 			str := strings.Join(os.Args[1:], " ")
 
-			client := pushbullet.New(conf.AccessToken)
+			client := pushbullet.New(conf.GetAccessToken())
 
 			note := requests.NewNote()
 			note.Title = str
