@@ -10,6 +10,7 @@ import (
 
 	"github.com/meinside/infisical-go"
 	"github.com/meinside/infisical-go/helper"
+	"github.com/tailscale/hujson"
 
 	"github.com/mitsuse/pushbullet-go"
 	"github.com/mitsuse/pushbullet-go/requests"
@@ -76,6 +77,17 @@ func (c *config) GetAccessToken() string {
 // loggers
 var _stderr = log.New(os.Stderr, "", 0)
 
+// standardize given JSON (JWCC) bytes
+func standardizeJSON(b []byte) ([]byte, error) {
+	ast, err := hujson.Parse(b)
+	if err != nil {
+		return b, err
+	}
+	ast.Standardize()
+
+	return ast.Pack(), nil
+}
+
 // load config file
 func loadConf() (conf config, err error) {
 	// https://xdgbasedirectoryspecification.com
@@ -96,8 +108,10 @@ func loadConf() (conf config, err error) {
 
 		var bytes []byte
 		if bytes, err = os.ReadFile(configFilepath); err == nil {
-			if err = json.Unmarshal(bytes, &conf); err == nil {
-				return conf, err
+			if bytes, err = standardizeJSON(bytes); err == nil {
+				if err = json.Unmarshal(bytes, &conf); err == nil {
+					return conf, err
+				}
 			}
 		}
 	}
