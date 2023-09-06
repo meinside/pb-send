@@ -1,4 +1,8 @@
+github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
+github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/meinside/infisical-go v0.0.18 h1:7vTzMYJc6e1pKmgwrsfPfYFkGMjemNdg/6utwdgUxzc=
 github.com/meinside/infisical-go v0.0.18/go.mod h1:cfQHaBT5VIzQISkrmJj/AUkyxGMoTBy8ENNEL0TJ02E=
 github.com/mitsuse/pushbullet-go v0.1.0 h1:W9izHOpz8uilRBgbYSnqb+LZK/l8Ad4slRTCBFpItG0=
 github.com/mitsuse/pushbullet-go v0.1.0/go.mod h1:sJ6Y3IROSfSQNLY/8gtYjq4Gs49DFnrxaqxQA6DVgnM=
+github.com/tailscale/hujson v0.0.0-20221223112325-20486734a56a h1:SJy1Pu0eH1C29XwJucQo73FrleVK6t4kYz4NVhp34Yw=
+github.com/tailscale/hujson v0.0.0-20221223112325-20486734a56a/go.mod h1:DFSS3NAGHthKo1gTlmEcSBiZrRJXi28rLNd/1udP1c8=
