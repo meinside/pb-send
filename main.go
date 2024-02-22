@@ -27,15 +27,14 @@ type config struct {
 
 	// or Infisical settings
 	Infisical *struct {
-		// NOTE: When the workspace's E2EE setting is enabled, APIKey is essential for decryption
-		E2EE   bool    `json:"e2ee,omitempty"`
-		APIKey *string `json:"api_key,omitempty"`
+		ClientID     string `json:"client_id"`
+		ClientSecret string `json:"client_secret"`
 
-		WorkspaceID        string               `json:"workspace_id"`
-		Token              string               `json:"token"`
-		Environment        string               `json:"environment"`
-		SecretType         infisical.SecretType `json:"secret_type"`
-		AccessTokenKeyPath string               `json:"key_path"`
+		WorkspaceID string               `json:"workspace_id"`
+		Environment string               `json:"environment"`
+		SecretType  infisical.SecretType `json:"secret_type"`
+
+		AccessTokenKeyPath string `json:"key_path"`
 	} `json:"infisical,omitempty"`
 }
 
@@ -45,24 +44,14 @@ func (c *config) GetAccessToken() string {
 		var accessToken string
 
 		var err error
-		if c.Infisical.E2EE && c.Infisical.APIKey != nil {
-			accessToken, err = helper.E2EEValue(
-				*c.Infisical.APIKey,
-				c.Infisical.WorkspaceID,
-				c.Infisical.Token,
-				c.Infisical.Environment,
-				c.Infisical.SecretType,
-				c.Infisical.AccessTokenKeyPath,
-			)
-		} else {
-			accessToken, err = helper.Value(
-				c.Infisical.WorkspaceID,
-				c.Infisical.Token,
-				c.Infisical.Environment,
-				c.Infisical.SecretType,
-				c.Infisical.AccessTokenKeyPath,
-			)
-		}
+		accessToken, err = helper.Value(
+			c.Infisical.ClientID,
+			c.Infisical.ClientSecret,
+			c.Infisical.WorkspaceID,
+			c.Infisical.Environment,
+			c.Infisical.SecretType,
+			c.Infisical.AccessTokenKeyPath,
+		)
 
 		if err != nil {
 			_stderr.Printf("failed to retrieve access token from infisical: %s", err)

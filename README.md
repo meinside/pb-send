@@ -27,27 +27,13 @@ You can use [Infisical](https://infisical.com/) for retrieving your access token
 ```json
 {
   "infisical": {
-    "workspace_id": "012345abcdefg",
-    "token": "st.xyzwabcd.0987654321.abcdefghijklmnop",
-    "environment": "dev",
-    "secret_type": "shared",
-    "key_path": "/path/to/your/KEY_TO_ACCESS_TOKEN"
-  }
-}
-```
-
-If your Infisical workspace's E2EE setting is enabled, you also need to provide your API key:
-
-```json
-{
-  "infisical": {
-    "e2ee": true,
-    "api_key": "ak.1234567890.abcdefghijk",
+    "client_id": "abcd-efgh-ijkl-mnop",
+    "client_secret": "0123456789abcdefghijklmnop",
 
     "workspace_id": "012345abcdefg",
-    "token": "st.xyzwabcd.0987654321.abcdefghijklmnop",
     "environment": "dev",
     "secret_type": "shared",
+
     "key_path": "/path/to/your/KEY_TO_ACCESS_TOKEN"
   }
 }
