@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
-	"github.com/meinside/infisical-go"
-	"github.com/meinside/infisical-go/helper"
-	"github.com/tailscale/hujson"
-
+	infisical "github.com/infisical/go-sdk"
+	"github.com/infisical/go-sdk/packages/models"
 	"github.com/mitsuse/pushbullet-go"
 	"github.com/mitsuse/pushbullet-go/requests"
+	"github.com/tailscale/hujson"
 )
 
 const (
@@ -23,44 +23,55 @@ const (
 
 type config struct {
 	// Pushbullet API Access Token,
-	AccessToken string `json:"access_token,omitempty"`
+	AccessToken *string `json:"access_token,omitempty"`
 
 	// or Infisical settings
 	Infisical *struct {
 		ClientID     string `json:"client_id"`
 		ClientSecret string `json:"client_secret"`
 
-		WorkspaceID string               `json:"workspace_id"`
-		Environment string               `json:"environment"`
-		SecretType  infisical.SecretType `json:"secret_type"`
+		ProjectID   string `json:"project_id"`
+		Environment string `json:"environment"`
+		SecretType  string `json:"secret_type"`
 
 		AccessTokenKeyPath string `json:"key_path"`
 	} `json:"infisical,omitempty"`
 }
 
-func (c *config) GetAccessToken() string {
-	if c.AccessToken == "" && c.Infisical != nil {
+// GetAccessToken returns your access token of Dropbox
+//
+// (retrieve it from infisical if needed)
+func (c *config) GetAccessToken() (accessToken *string, err error) {
+	if (c.AccessToken == nil || len(*c.AccessToken) == 0) &&
+		c.Infisical != nil {
 		// read access token from infisical
-		var accessToken string
+		client := infisical.NewInfisicalClient(infisical.Config{
+			SiteUrl: "https://app.infisical.com",
+		})
 
-		var err error
-		accessToken, err = helper.Value(
-			c.Infisical.ClientID,
-			c.Infisical.ClientSecret,
-			c.Infisical.WorkspaceID,
-			c.Infisical.Environment,
-			c.Infisical.SecretType,
-			c.Infisical.AccessTokenKeyPath,
-		)
-
+		_, err = client.Auth().UniversalAuthLogin(c.Infisical.ClientID, c.Infisical.ClientSecret)
 		if err != nil {
-			_stderr.Printf("failed to retrieve access token from infisical: %s", err)
+			_stderr.Printf("* failed to authenticate with Infisical: %s", err)
+			return nil, err
 		}
 
-		c.AccessToken = accessToken
+		var secret models.Secret
+		secret, err = client.Secrets().Retrieve(infisical.RetrieveSecretOptions{
+			SecretKey:   path.Base(c.Infisical.AccessTokenKeyPath),
+			SecretPath:  path.Dir(c.Infisical.AccessTokenKeyPath),
+			ProjectID:   c.Infisical.ProjectID,
+			Type:        c.Infisical.SecretType,
+			Environment: c.Infisical.Environment,
+		})
+		if err != nil {
+			_stderr.Printf("* failed to retrieve Dropbox access token from infisical: %s\n", err)
+			return nil, err
+		}
+
+		c.AccessToken = &secret.SecretValue
 	}
 
-	return c.AccessToken
+	return c.AccessToken, nil
 }
 
 // loggers
@@ -121,13 +132,16 @@ $ %s [message to send]`, os.Args[0])
 		default: // one or more params
 			str := strings.Join(os.Args[1:], " ")
 
-			client := pushbullet.New(conf.GetAccessToken())
+			var accessToken *string
+			if accessToken, err = conf.GetAccessToken(); err == nil {
+				client := pushbullet.New(*accessToken)
 
-			note := requests.NewNote()
-			note.Title = str
-			note.Body = str
+				note := requests.NewNote()
+				note.Title = str
+				note.Body = str
 
-			_, err = client.PostPushesNote(note)
+				_, err = client.PostPushesNote(note)
+			}
 		}
 	}
 
