@@ -30,7 +30,7 @@ You can use [Infisical](https://infisical.com/) for retrieving your access token
     "client_id": "abcd-efgh-ijkl-mnop",
     "client_secret": "0123456789abcdefghijklmnop",
 
-    "workspace_id": "012345abcdefg",
+    "project_id": "012345abcdefg",
     "environment": "dev",
     "secret_type": "shared",
 

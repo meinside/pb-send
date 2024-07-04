@@ -1,0 +1,17 @@
+{
+    // (A) your pushbullet access token:
+    "access_token": "abcd123456789ABCDEFG",
+
+    // (B) or, infisical values:
+    "infisical": {
+        // infisical universal-auth values
+        "client_id": "012345-abcdefg-987654321",
+        "client_secret": "aAbBcCdDeEfFgG0123456789xyzwXYZW",
+
+        // values for your desired secret key:
+        "project_id": "012345abcdefg",
+        "environment": "dev",
+        "secret_type": "shared",
+        "key_path": "/path/to/your/KEY_TO_ACCESS_TOKEN",
+    },
+}
