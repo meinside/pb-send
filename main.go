@@ -38,7 +38,7 @@ type config struct {
 	} `json:"infisical,omitempty"`
 }
 
-// GetAccessToken returns your access token of Dropbox
+// GetAccessToken returns your access token of Pushbullet
 //
 // (retrieve it from infisical if needed)
 func (c *config) GetAccessToken() (accessToken *string, err error) {
@@ -64,7 +64,7 @@ func (c *config) GetAccessToken() (accessToken *string, err error) {
 			Environment: c.Infisical.Environment,
 		})
 		if err != nil {
-			_stderr.Printf("* failed to retrieve Dropbox access token from infisical: %s\n", err)
+			_stderr.Printf("* failed to retrieve Pushbullet access token from infisical: %s\n", err)
 			return nil, err
 		}
 
