@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -45,7 +46,7 @@ func (c *config) GetAccessToken() (accessToken *string, err error) {
 	if (c.AccessToken == nil || len(*c.AccessToken) == 0) &&
 		c.Infisical != nil {
 		// read access token from infisical
-		client := infisical.NewInfisicalClient(infisical.Config{
+		client := infisical.NewInfisicalClient(context.TODO(), infisical.Config{
 			SiteUrl: "https://app.infisical.com",
 		})
 
@@ -146,6 +147,6 @@ $ %s [message to send]`, os.Args[0])
 	}
 
 	if err != nil {
-		_stderr.Fatalf(err.Error())
+		_stderr.Fatalf("%s", err.Error())
 	}
 }
